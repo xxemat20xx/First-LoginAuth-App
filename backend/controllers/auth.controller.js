@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const generateTokenAndSetCookie = require('../utils/generateTokenAndSetCookie')
+const sendVerificationEmail = require('../mailtrap/emails')
 
 const signup = async(req, res) => {
     const {email, password, name} = req.body;
@@ -31,6 +32,9 @@ const signup = async(req, res) => {
 
         // jwt token generation 
         generateTokenAndSetCookie(res, newUser._id);
+
+        // send verification 
+        await sendVerificationEmail(newUser.email, verificationToken)
 
         res.status(201).json({
             success: true,
