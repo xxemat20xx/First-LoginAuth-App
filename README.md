@@ -8,5 +8,6 @@
     <li>Node Js</li>
     <li>Bcrypt JS</li>
     <li>Mailtrap</li>
+    <li>JSON Web Token</li>
   </ul>
 </pre>
