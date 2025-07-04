@@ -3,7 +3,11 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const generateTokenAndSetCookie = require('../utils/generateTokenAndSetCookie')
-const {sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail} = require('../mailtrap/emails')
+const {sendVerificationEmail, 
+    sendWelcomeEmail, 
+    sendPasswordResetEmail, 
+    sendResetSuccessEmail
+} = require('../mailtrap/emails')
 const User = require('../models/user.model');
 
 const signup = async(req, res) => {
@@ -214,11 +218,36 @@ const resetPassword = async(req, res)=>{
 
     }
 }
+const checkAuth = async(req, res)=>{
+    
+    try {
+        const user = await User.findById(req.userId);
+        if(!user){
+            res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            user:{
+                ...user._doc,
+                password: undefined
+            }
+        });
+    } catch (error) {
+          return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+    }
+}
 module.exports = {
     signup,
     login,
     logout,
     verifyEmail,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    checkAuth
 };
