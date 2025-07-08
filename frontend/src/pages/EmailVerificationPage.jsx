@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
 import {motion as Motion} from 'framer-motion'
-
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { Loader } from 'lucide-react';
+import toast from 'react-hot-toast'
 const EmailVerificationPage = () => {
     const [code, setCode] = useState(["", "", "", "", "", ""]);
     const inputRefs = useRef([]);// KEEP track input ref 
+    const navigate = useNavigate();
+    const {error, isLoading, verifyEmail} = useAuthStore();
 
-    const isLoading = false;
 const handleChange = (index, value) => {
 
   const newCode = [...code];
@@ -51,16 +55,22 @@ const handleChange = (index, value) => {
     }
 
     }
-    const handleSubmit =(e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         const verificationCode = code.join("");
-        console.log("You submitted code: ", verificationCode);
+        try {
+            await verifyEmail(verificationCode);
+            navigate("/");
+            toast.success("Email verified successfully.")
+        } catch (error) {
+            console.error(error)
+        }
     }
     useEffect(() => {
         if(code.every(digit => digit !== '')){
             handleSubmit(new Event('submit'));
         }
-    })
+    }, []);
     return (
         <Motion.div
     initial={{opacity: 0, y:20}}
@@ -87,8 +97,10 @@ const handleChange = (index, value) => {
                             border-gray-500 rounded-lg focus:border-green-500 focus:outline-none'
                             readOnly={code.every((d) => d !== "")} //disable when all complete
                         />
+                        
                     ))}
                 </div>
+                {error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
                 <Motion.button
                 className='mt-5 w-full py-3 px-4 bg-gradient-to-r 
                     from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:from-green-600 
