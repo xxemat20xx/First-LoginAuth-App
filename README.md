@@ -11,4 +11,7 @@
     <li>JSON Web Token</li>
     <li>Zustand</li>
   </ul>
+
+  resume: 3:12:59
 </pre>
+
