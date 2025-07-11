@@ -97,49 +97,53 @@ const verifyEmail = async (req, res) => {
     }
 }
 
-const login = async(req, res) => {
-    const {email, password} = req.body;
-    try {
-        const user = await User.findOne({email}); 
-        // if user not found
-        if(!user){
-            res.status(400).json({
-                success: false,
-                message: "Invalid credentials"
-            })
-        }
-        const isPasswordValid = await bcrypt.compare(password, user.password) //this will compare the user input password to the db password
-        // if password is incorrect
-        if(!password){
-              res.status(400).json({
-                success: false,
-                message: "Invalid credentials"
-            })
-        }
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
-        generateTokenAndSetCookie(res, user._id);
+  try {
+    const user = await User.findOne({ email });
 
-        user.lastLogin = new Date();
-        // save to db
-        await user.save();
-
-        // send response back
-        res.status(200).json({
-            success: true,
-            message: "Logged in successfully",
-            user: {
-                ...user._doc,
-                password: undefined,
-            },
-        });
-    } catch (error) {
-        console.log("Error in login");
-        res.status(400).json({
-            success: false,
-            message: error.message
-        })
+    // ❗ User not found
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials"
+      });
     }
-}
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    // ❗ Incorrect password
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials"
+      });
+    }
+
+    // ✅ Set token cookie
+    generateTokenAndSetCookie(res, user._id);
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+    });
+  } catch (error) {
+    console.error("Error in login:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
 const logout = async(req, res) => {
     res.clearCookie("token");
     res.status(200).json({
@@ -218,30 +222,33 @@ const resetPassword = async(req, res)=>{
 
     }
 }
-const checkAuth = async(req, res)=>{
-    
-    try {
-        const user = await User.findById(req.userId);
-        if(!user){
-            res.status(400).json({
-                success: false,
-                message: "User not found"
-            })
-        }
-        res.status(200).json({
-            success: true,
-            user:{
-                ...user._doc,
-                password: undefined
-            }
-        });
-    } catch (error) {
-          return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
     }
-}
+
+    res.status(200).json({
+      success: true,
+      user: {
+        ...user._doc,
+        password: undefined
+      }
+    });
+  } catch (error) {
+    console.error("Error in checkAuth:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
 module.exports = {
     signup,
     login,

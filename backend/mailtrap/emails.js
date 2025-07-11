@@ -42,7 +42,7 @@ const sendWelcomeEmail = async (email, name) => {
 const sendPasswordResetEmail = async (email, resetURL) => {
   const recipient = [{email}];
   try {
-    const response = await aw.send({
+    const response = await mailtrapClient.send({
       from: sender,
       to: recipient,
       subject: "Reset your password",

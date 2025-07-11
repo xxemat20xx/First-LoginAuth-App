@@ -8,6 +8,8 @@ import { useAuthStore } from "./store/authStore"
 import { useEffect } from "react"
 import Dashboard from "./pages/Dashboard"
 import LoadingSpinner from "./components/LoadingSpinner"
+import ForgotPasswordPage from "./pages/ForgotPasswordPage"
+import ResetPasswordPage from "./pages/ResetPasswordPage"
 // protected routes that require authentication
 const ProtectedRoute = ({children}) => {
   const {isAuthenticated,user} = useAuthStore();
@@ -23,25 +25,28 @@ const ProtectedRoute = ({children}) => {
 
 // redirect authenticated user to the homepage
 const RedirectAuthenticatedUser = ({children}) => {
-  const {isAuthenticated, user} = useAuthStore();
-  if(isAuthenticated && user.isVerified){
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (isAuthenticated && user?.isVerified) {
     return <Navigate to="/" replace />
   }
-    return children;
+
+  return children;
 }
 
 
+
+
 function App() {
-  const{ isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+  const{ isCheckingAuth, checkAuth} = useAuthStore();
 
   useEffect(() => {
     checkAuth();
   },[checkAuth]);
 
+  // 
   if(isCheckingAuth) return <LoadingSpinner />
 
-  console.log("Is authenticated ", isAuthenticated);
-  console.log("user ", user)
   return (
     <div className="min-h-screen bg-gradient-to-br 
     from-gray-900 via-green-900 to-emerald-900 
@@ -87,7 +92,26 @@ function App() {
           </RedirectAuthenticatedUser>
         }/>
         <Route path='/verify-email' element={<EmailVerificationPage/>}/>
+        <Route path='/forgot-password' 
+        element={
+        <RedirectAuthenticatedUser>
+            <ForgotPasswordPage />
+        </RedirectAuthenticatedUser>}/>
+
+               {/* RESET PASSWORD PAGE */}
+        <Route 
+          path="/reset-password/:token"
+          element={
+            <RedirectAuthenticatedUser>
+                <ResetPasswordPage />
+            </RedirectAuthenticatedUser>
+          }        
+        />
+      
       </Routes>
+
+ 
+      
       <Toaster />
     </div>
   )
