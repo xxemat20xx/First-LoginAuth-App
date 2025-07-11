@@ -5,9 +5,9 @@ import LoginPage from "./pages/LoginPage"
 import EmailVerificationPage from "./pages/EmailVerificationPage"
 import { Toaster } from "react-hot-toast"
 import { useAuthStore } from "./store/authStore"
-import { Children, useEffect } from "react"
+import { useEffect } from "react"
 import Dashboard from "./pages/Dashboard"
-
+import LoadingSpinner from "./components/LoadingSpinner"
 // protected routes that require authentication
 const ProtectedRoute = ({children}) => {
   const {isAuthenticated,user} = useAuthStore();
@@ -33,9 +33,13 @@ const RedirectAuthenticatedUser = ({children}) => {
 
 function App() {
   const{ isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+
   useEffect(() => {
     checkAuth();
   },[checkAuth]);
+
+  if(isCheckingAuth) return <LoadingSpinner />
+
   console.log("Is authenticated ", isAuthenticated);
   console.log("user ", user)
   return (

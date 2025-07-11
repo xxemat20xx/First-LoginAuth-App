@@ -4,12 +4,17 @@ import {Mail,Lock, Loader} from 'lucide-react'
 import Input from '../components/Input';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useAuthStore } from '../store/authStore';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const isLoading = false;
-  const handleLogin = (e) =>{
+
+  //auth store
+  const { login, isLoading, error } = useAuthStore(); 
+
+  const handleLogin = async(e) =>{
     e.preventDefault();
+    await login(email, password);
   }
     return (
      <Motion.div
@@ -38,11 +43,13 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 {/* forgot password */}
-                <div className='flex items-center mb-'>
+                <div className='flex items-center mb-4'>
                   <Link to='/forgot-password' className='text-sm text-green-400 hover:underline'>
                     Forgot password?
                   </Link>
                 </div>
+                {/* if error */} 
+                {error && <p className='text-red-500 font-semibold mb-4'>{error}</p>}
                 {/* BUTTON */}
                 <Motion.button
                 className='mt-5 w-full py-3 px-4 bg-gradient-to-r 
