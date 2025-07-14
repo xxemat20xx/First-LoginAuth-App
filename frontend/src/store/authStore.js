@@ -93,16 +93,21 @@ forgotPassword: async (email) => {
   }
 },
 
-    resetPassword: async(token, password) => {
+resetPassword: async(token, password) => {
        set({ isLoading: true, error: null });
        try {
             const response = await axios.post(`${API_URL}/reset-password/${token}`, { password });
             set({message: response.data.message, isLoading: false });
        } catch (error) {
-            console.error("Reset password error:", error);
-            set({ error: error.response?.data?.message || "Error resetting password", isLoading: false });
+            set({
+                error: error.response?.data?.message || "Error resetting password",
+                isLoading: false
+            });
             throw error; // so your component can catch it
-       }    
+       }
+        finally {
+         set({ isLoading: false }); // ✅ Always stop loading!
+        }  
     }   
 }));
 

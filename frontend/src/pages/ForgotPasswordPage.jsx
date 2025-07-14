@@ -36,7 +36,7 @@ const handleSubmit = async(e) => {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
-                                    <Motion.button
+            <Motion.button
                 className='mt-5 w-full py-3 px-4 bg-gradient-to-r 
                     from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:from-green-600 
                     hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
@@ -47,7 +47,7 @@ const handleSubmit = async(e) => {
                     disabled={isLoading}
                 >
                     {isLoading ? <Loader className='w-6 h-6 animate-spin mx-auto'/>: "Send Reset Link"}
-                </Motion.button>
+            </Motion.button>
                 </form>
               ) : (
                  <div className='text-center'>
