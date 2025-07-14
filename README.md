@@ -1,5 +1,5 @@
 <pre>
-  <h1>My First Login Auth App</h1>
+  <h1>First Login Auth App</h1>
   <ul>
     <h2>Tech Used:</h2>
     <li>Mongoose</li>
