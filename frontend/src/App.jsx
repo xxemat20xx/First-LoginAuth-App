@@ -104,6 +104,11 @@ function App() {
           path="/reset-password/:token"
           element={<ResetPasswordPage />}        
         />
+        {/* Redirect all other routes to the homepage */}
+         <Route 
+          path="*"
+          element={<Navigate to="/" replace />}       
+        />
       </Routes>
       <Toaster />
     </div>
